@@ -1,0 +1,17 @@
+# Ignorar archivos y carpetas de la solución
+.vs/
+*.user
+*.suo
+
+# Ignorar carpetas específicas de los proyectos
+**/bin/
+**/obj/
+
+# Ignorar archivos de configuración específicos de usuarios
+*.log
+*.tmp
+
+# Ignorar paquetes NuGet y otros temporales
+*.nupkg
+*.snupkg
+packages/
