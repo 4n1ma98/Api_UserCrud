@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using DataAccess.Contracts;
 using Microsoft.Extensions.Configuration;
+using Models.Dtos;
 using Models.Entities;
 
 namespace DataAccess
@@ -15,14 +16,18 @@ namespace DataAccess
     {
         private readonly DBContext _dBContext;
         private readonly IConfiguration _config;
+        private readonly IErrorCode _errorCode;
+        private readonly IErrorLog _errorLog;
 
-        public UserCrud(DBContext dBContext, IConfiguration config)
+        public UserCrud(DBContext dBContext, IConfiguration config, IErrorCode errorCode, IErrorLog errorLog)
         {
             _dBContext = dBContext;
             _config = config;
+            _errorCode = errorCode;
+            _errorLog = errorLog;
         }
 
-        public void Create(User user, Credentials credentials)
+        public Response Create(User user, Credentials credentials)
         {
             var parameters = new
             {
@@ -39,16 +44,17 @@ namespace DataAccess
                 using (IDbConnection _context = _dBContext.Conn(_config.GetConnectionString("DefaultConnection")!))
                 {
                     _context.Execute("SP_UserCRUD", parameters, commandTimeout: 600, commandType: CommandType.StoredProcedure);
+                    return _errorCode.GetError(0);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                _errorLog.Register("UserCrud/Create", ex.Message);
+                return _errorCode.GetError(-999, ex);
             }
         }
 
-        public List<User> Read(User user)
+        public Response Read(User user)
         {
             try
             {
@@ -60,16 +66,17 @@ namespace DataAccess
 
                 using (IDbConnection _context = _dBContext.Conn(_config.GetConnectionString("DefaultConnection")!))
                 {
-                    return _context.Query<User>("SP_UserCRUD", parameters, commandTimeout: 600, commandType: CommandType.StoredProcedure).ToList();
+                    return _errorCode.GetError(0, _context.Query<User>("SP_UserCRUD", parameters, commandTimeout: 600, commandType: CommandType.StoredProcedure).ToList());
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _errorLog.Register("UserCrud/Read", ex.Message);
+                return _errorCode.GetError(-999, ex);
             }
         }
 
-        public void Update(User user)
+        public Response Update(User user)
         {
             var parameters = new
             {
@@ -84,16 +91,17 @@ namespace DataAccess
                 using (IDbConnection _context = _dBContext.Conn(_config.GetConnectionString("DefaultConnection")!))
                 {
                     _context.Execute("SP_UserCRUD", parameters, commandTimeout: 600, commandType: CommandType.StoredProcedure);
+                    return _errorCode.GetError(0);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                _errorLog.Register("UserCrud/Update", ex.Message);
+                return _errorCode.GetError(-999, ex);
             }
         }
 
-        public void Delete(User user)
+        public Response Delete(User user)
         {
             var parameters = new
             {
@@ -106,16 +114,17 @@ namespace DataAccess
                 using (IDbConnection _context = _dBContext.Conn(_config.GetConnectionString("DefaultConnection")!))
                 {
                     _context.Execute("SP_UserCRUD", parameters, commandTimeout: 600, commandType: CommandType.StoredProcedure);
+                    return _errorCode.GetError(0);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                _errorLog.Register("UserCrud/Delete", ex.Message);
+                return _errorCode.GetError(-999, ex);
             }
         }
 
-        public List<User> ReadAll()
+        public Response ReadAll()
         {
             try
             {
@@ -126,12 +135,13 @@ namespace DataAccess
 
                 using (IDbConnection _context = _dBContext.Conn(_config.GetConnectionString("DefaultConnection")!))
                 {
-                    return _context.Query<User>("SP_UserCRUD", parameters, commandTimeout: 600, commandType: CommandType.StoredProcedure).ToList();
+                    return _errorCode.GetError(0, _context.Query<User>("SP_UserCRUD", parameters, commandTimeout: 600, commandType: CommandType.StoredProcedure).ToList());
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _errorLog.Register("UserCrud/ReadAll", ex.Message);
+                return _errorCode.GetError(-999, ex);
             }
         }
     }

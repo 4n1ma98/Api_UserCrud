@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using DataAccess.Contracts;
 using Microsoft.Extensions.Configuration;
+using Models.Dtos;
 using Models.Entities;
 
 namespace DataAccess
@@ -15,14 +16,16 @@ namespace DataAccess
     {
         private readonly DBContext _dBContext;
         private readonly IConfiguration _config;
+        private readonly IErrorCode _errorCode;
 
-        public UserLogin(DBContext dBContext, IConfiguration config)
+        public UserLogin(DBContext dBContext, IConfiguration config, IErrorCode errorCode)
         {
             _dBContext = dBContext;
             _config = config;
+            _errorCode = errorCode;
         }
 
-        public User Execute(Login login)
+        public Response Execute(Login login)
         {
             try
             {
@@ -35,12 +38,12 @@ namespace DataAccess
 
                 using (IDbConnection _context = _dBContext.Conn(_config.GetConnectionString("DefaultConnection")!))
                 {
-                    return _context.Query<User>("SP_UserCRUD", parameters, commandTimeout: 600, commandType: CommandType.StoredProcedure).FirstOrDefault()!;
+                    return _errorCode.GetError(0, _context.Query<User>("SP_UserCRUD", parameters, commandTimeout: 600, commandType: CommandType.StoredProcedure).FirstOrDefault()!);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return _errorCode.GetError(-999, ex);
             }
         } 
     }

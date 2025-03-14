@@ -27,6 +27,8 @@ builder.Services.AddScoped<IUserValidation, UserValidation>();
 
 builder.Services.AddScoped<IUserCrud, UserCrud>();
 builder.Services.AddScoped<IUserLogin, UserLogin>();
+builder.Services.AddScoped<IErrorCode, ErrorCode>();
+builder.Services.AddScoped<IErrorLog, ErrorLog>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

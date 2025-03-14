@@ -1,4 +1,5 @@
-﻿using Business.Contracts;
+﻿using Azure.Core;
+using Business.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Dtos;
@@ -21,41 +22,69 @@ namespace Api_UserCRUD.Controllers
         [HttpPost("[action]")]
         public IActionResult CreateUser(CreateUserRequest request)
         {
-            _userValidation.Create_User(request);
-            return Ok();
+            Response response = _userValidation.Create_User(request);
+
+            if (response.IdError == 0) return Ok(response);
+            else if (response.IdError == -999) return StatusCode(500, response);
+            else return BadRequest(response);
         }
 
         [HttpGet("[action]/{id?}")]
         public IActionResult ReadUser(string? id = null)
         {
+            Response response = new();
+
             if (string.IsNullOrEmpty(id))
-            {
-                return Ok(_userValidation.Read_Users());
-            }
+                response = _userValidation.Read_Users();
             else
-            {
-                return Ok(_userValidation.Read_User(id));
-            }
+                response = _userValidation.Read_User(id);
+
+
+            if (response.IdError == 0) 
+                return Ok(response);
+            else if (response.IdError == -999) 
+                return StatusCode(500, response);
+            else 
+                return BadRequest(response);
         }
 
         [HttpPut("[action]")]
         public IActionResult UpdateUser(UpdateUserRequest request)
         {
-            _userValidation.Update_User(request);
-            return Ok();
+            Response response = _userValidation.Update_User(request);
+
+            if (response.IdError == 0)
+                return Ok(response);
+            else if (response.IdError == -999)
+                return StatusCode(500, response);
+            else
+                return BadRequest(response);
         }
 
         [HttpDelete("[action]/{id}")]
         public IActionResult DeleteUser(string id)
         {
-            _userValidation.Delete_User(id);
-            return Ok();
+            Response response = _userValidation.Delete_User(id);
+
+            if (response.IdError == 0)
+                return Ok(response);
+            else if (response.IdError == -999)
+                return StatusCode(500, response);
+            else
+                return BadRequest(response);
         }
 
         [HttpPost("[action]")]
         public IActionResult Login(LoginRequest request)
         {
-            return Ok(_loginValidation.User_Login(request));
+            Response response = _loginValidation.User_Login(request);
+
+            if (response.IdError == 0)
+                return Ok(response);
+            else if (response.IdError == -999)
+                return StatusCode(500, response);
+            else
+                return BadRequest(response);
         }
     }
 }

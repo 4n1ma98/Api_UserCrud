@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Models.Dtos;
-using Models.Entities;
 
-namespace Business.Contracts
+namespace DataAccess.Contracts
 {
-    public interface ILoginValidation
+    public interface IErrorCode
     {
-        Response User_Login(LoginRequest request);
+        Response GetError(int idError, object? additionalData = null);
     }
 }

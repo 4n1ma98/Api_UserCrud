@@ -21,7 +21,7 @@ namespace Business
             _encrypter = encrypter;
         }
 
-        public void Create_User(CreateUserRequest request)
+        public Response Create_User(CreateUserRequest request)
         {
             User user = new()
             {
@@ -36,10 +36,10 @@ namespace Business
                 Pass = _encrypter.Encrypt(request.Pass),
             };
 
-            _userCrud.Create(user, credentials);
+            return _userCrud.Create(user, credentials);
         }
 
-        public List<User> Read_User(string id)
+        public Response Read_User(string id)
         {
             User user = new()
             {
@@ -49,7 +49,7 @@ namespace Business
             return _userCrud.Read(user);
         }
 
-        public void Update_User(UpdateUserRequest request)
+        public Response Update_User(UpdateUserRequest request)
         {
             User user = new()
             {
@@ -58,20 +58,20 @@ namespace Business
                 Active = request.Active,
             };
 
-            _userCrud.Update(user);
+            return _userCrud.Update(user);
         }
 
-        public void Delete_User(string id)
+        public Response Delete_User(string id)
         {
             User user = new()
             {
                 Id = id,
             };
 
-            _userCrud.Delete(user);
+            return _userCrud.Delete(user);
         }
 
-        public List<User> Read_Users()
+        public Response Read_Users()
         {
             return _userCrud.ReadAll();
         }
