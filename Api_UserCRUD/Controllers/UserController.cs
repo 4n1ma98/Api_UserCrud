@@ -43,7 +43,7 @@ namespace Api_UserCRUD.Controllers
             return Ok();
         }
 
-        [HttpPut("[action]")]
+        [HttpDelete("[action]/{id}")]
         public IActionResult DeleteUser(string id)
         {
             _userValidation.Delete_User(id);
