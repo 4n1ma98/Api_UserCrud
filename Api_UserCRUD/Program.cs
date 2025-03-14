@@ -20,9 +20,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddTransient<DBContext>();
 
+builder.Services.AddScoped<IDecrypter, Decrypter>();
+builder.Services.AddScoped<IEncrypter, Encrypter>();
+builder.Services.AddScoped<ILoginValidation, LoginValidation>();
 builder.Services.AddScoped<IUserValidation, UserValidation>();
 
 builder.Services.AddScoped<IUserCrud, UserCrud>();
+builder.Services.AddScoped<IUserLogin, UserLogin>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

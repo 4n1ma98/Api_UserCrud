@@ -13,10 +13,12 @@ namespace Business
     public class UserValidation : IUserValidation
     {
         private readonly IUserCrud _userCrud;
+        private readonly IEncrypter _encrypter;
 
-        public UserValidation(IUserCrud userCrud)
+        public UserValidation(IUserCrud userCrud, IEncrypter encrypter)
         {
             _userCrud = userCrud;
+            _encrypter = encrypter;
         }
 
         public void Create_User(CreateUserRequest request)
@@ -31,7 +33,7 @@ namespace Business
 
             Credentials credentials = new()
             {
-                Pass = request.Pass,
+                Pass = _encrypter.Encrypt(request.Pass),
             };
 
             _userCrud.Create(user, credentials);

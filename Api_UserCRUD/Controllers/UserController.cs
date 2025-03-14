@@ -10,10 +10,12 @@ namespace Api_UserCRUD.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserValidation _userValidation;
+        private readonly ILoginValidation _loginValidation;
 
-        public UserController(IUserValidation userValidation)
+        public UserController(IUserValidation userValidation, ILoginValidation loginValidation)
         {
             _userValidation = userValidation;
+            _loginValidation = loginValidation;
         }
 
         [HttpPost("[action]")]
@@ -48,6 +50,12 @@ namespace Api_UserCRUD.Controllers
         {
             _userValidation.Delete_User(id);
             return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult Login(LoginRequest request)
+        {
+            return Ok(_loginValidation.User_Login(request));
         }
     }
 }
